@@ -1,6 +1,6 @@
 # HackerRank-SQL
 
-### 1. Basic Select challenges
+### 1. Basic Select challenges take home notes
 
     - SELECT FROM WHERE ORDER BY
     - Regular expressions: SELECT FROM WHERE REGEXP / NOT REGEXP 
