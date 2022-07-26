@@ -1,4 +1,4 @@
-7===============================================
+7==SELECT ORDER BY & GROUP BY ==================
 SELECT name, address 
 	FROM table 
 	WHERE address = "x" OR address = "y"; 
@@ -14,7 +14,7 @@ SELECT
 	ORDER BY
 ================================================
 
-8===============================================
+8=======INSERT, UPDATE, DELETE==================
 CREATE TABLE store (
 	id INT AUTO_INCREMENT PRIMARY KEY, 
 	name CHAR(4)); 
@@ -80,10 +80,10 @@ SELECT A.emp "employee" , B.emp "manager", B.phone "manager's manager contact"
          ON A.manager = B.emp
    WHERE A.emp = 'assistant';
 
--- |EMP|MANAGER|CONTACT|
+-- |EMP 		|MANAGER 	|CONTACT|
 -- ----------------------
--- CEO 		|NULL		| 1111	|
--- dep_manager | CEO 		| 2222	| 
+-- CEO 			|NULL		| 1111	|
+-- dep_manager  |CEO 		| 2222	| 
 -- assistant 	|dep_manager| 3333	|
 
 -- returns 
@@ -106,4 +106,88 @@ BEGIN
 END $$
 DELIMITER ; 
 CALL <function_name>
+
+DECLARE purchase_date DATE; 
+SELECT purchase INTO purchase_date #put info into purchase_date variable
+	FROM market_db.member
+	WHERE mem_id = 112; 
+
+ CASE
+ 	WHEN condition1 THEN 
+ 		<SQL command>
+ 	WHEN condition2 THEN 
+ 		<SQL command>
+ 	ELSE
+ 		<SQL command>
+ END CASE; 
+
+ #while 
+ WHILE <condition> DO 
+ 	<sql command>;
+ END WHILE; 
+
+myWhile: 
+ WHILE <condition> DO 
+ 	IF () THEN 
+ 		ITERATE myWhile; #goes to next while loop
+ 	END IF; 
+ 	IF () THEN 
+ 		LEAVE myWHile; #end while loop 
+ 	END IF; 
+ END WHILE; 
+
+#dynamic SQL: PREPARE AND EXECUTE ex. gate_entry_time indicating when (date/time) people passed the gate 
+ PREPARE myQuery FROM 'SELECT * FROM member WHERE mem_id = 'ABC''; 
+ EXECUTE myQuery; 
+ DEALLOCATE PREPARE myQuery; 
+================================================
+
+13.PRIMARY, FOREIGN, UNIQUE, CHECK, DEFAULT ====
+#3 ways to assign primary key 
+DROP TABLE IF EXISTS member;
+CREATE TABLE member 
+( mem_id  CHAR(8) NOT NULL PRIMARY KEY);  
+
+CREATE TABLE member 
+( mem_id  CHAR(8) NOT NULL, 
+  PRIMARY KEY (mem_id));
+
+ALTER TABLE member
+     ADD CONSTRAINT 
+     PRIMARY KEY (mem_id);
+
+#foreign 
+CREATE TABLE buy 
+(  num         INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+   mem_id      CHAR(8) NOT NULL, 
+   FOREIGN KEY(mem_id) REFERENCES member(mem_id)
+);
+
+ALTER TABLE buy
+    ADD CONSTRAINT 
+    FOREIGN KEY(mem_id) REFERENCES member(mem_id)
+    ON UPDATE CASCADE #******
+    ON DELETE CASCADE; #******
+
+#on upate/delete cascade allows to update linked keys 
+UPDATE member SET mem_id = 'PINK' WHERE mem_id='BLK';
+
+-- UNIQUE
+CREATE TABLE member 
+( email       CHAR(30)  NULL UNIQUE); #there will be no duplicate 
+
+-- CHECK
+CREATE TABLE member 
+( height      TINYINT UNSIGNED NULL CHECK (height >= 100));
+
+ALTER TABLE member
+    ADD CONSTRAINT 
+    CHECK  (phone1 IN ('416', '647')) ;
+
+-- DEFAULT
+CREATE TABLE member 
+(height      TINYINT UNSIGNED NULL DEFAULT 160);
+
+ALTER TABLE member
+    ALTER COLUMN phone1 SET DEFAULT '416';
 ================================================
